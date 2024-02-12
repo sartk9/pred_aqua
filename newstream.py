@@ -24,14 +24,18 @@ if uploaded_files and len(uploaded_files) == 5:  # Ensure exactly five images ar
         st.write("Data received in POST request:")
         st.json(data)  # Display the JSON data
 
-        if st.button("Fetch Table Data"):
-            response = requests.get("http://localhost:8000/get_combined_data")
-            if response.status_code == 200:
-                data = response.json()["data"]
-                df = pd.DataFrame(data["individual_data"])
-                st.write(df)
-            else:
-                st.error(f"Error: {response.status_code} - {response.reason}")
+# Fetch Table Data button
+if st.button("Fetch Table Data"):
+    response = requests.get("http://localhost:8000/")
+    if response.status_code == 200:
+        html_table = response.text
+        
+        # Modify the HTML table to include image tags with correct URLs
+        html_table = html_table.replace('src="/images/', 'src="http://localhost:8000/images/')
+        
+        st.write(html_table, unsafe_allow_html=True)
+    else:
+        st.error(f"Error: {response.status_code} - {response.reason}")
 else:
-    st.warning("Please upload exactly five images.")
+    st.write("Click the button above to fetch table data.")
 

@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "tab": "crop_mangmt_disease",
+    "id": "sartkk_2024-02-12T16:15:29.094525"
+  },
+  "create_dt": "",
+  "create_by": "sartkk",
+  "update_dt": "",
+  "update_by": "",
+  "affected_dt": "",
+  "individual_data": {
+    "img1": {
+      "image_path": "/home/sarthak/Downloads/graph/Untitled.jpg",
+      "lettuce": {
+        "Green Batavia": 34.05942,
+        "Lollo Rosso": 21.082829,
+        "Butterhead": 20.495182
+      },
+      "disease": {
+        "Healthy": 37.383869,
+        "Powdery Mildew": 14.261051,
+        "Mosaic Virus": 7.733854
+      },
+      "pest": {
+        "Wireworms": 15.053442,
+        "Healthy": 10.279566,
+        "Flea beetles": 9.480491
+      }
+    },
+    "img2": {
+      "image_path": "/home/sarthak/Downloads/graph/butter.jpeg",
+      "lettuce": {
+        "Butterhead": 63.447964,
+        "Romaine": 17.81197,
+        "Green Batavia": 11.82268
+      },
+      "disease": {
+        "Healthy": 73.248661,
+        "Mosaic Virus": 14.132459,
+        "Black Rot Leaf Spot": 10.211738
+      },
+      "pest": {
+        "Healthy": 16.594842,
+        "Stinkbugs": 13.837716,
+        "Cutworms": 13.324817
+      }
+    },
+    "img3": {
+      "image_path": "/home/sarthak/Downloads/graph/Alternaria Leaf Spot.jpeg",
+      "lettuce": {
+        "Butterhead": 47.08769,
+        "Iceberg": 20.980859,
+        "Lollo Rosso": 14.840665
+      },
+      "disease": {
+        "Downy Mildew": 27.601171,
+        "Powdery Mildew": 15.004353,
+        "Septoria Leaf Spot": 10.07848
+      },
+      "pest": {
+        "Healthy": 25.719854,
+        "Stinkbugs": 13.95565,
+        "Aphids": 12.581989
+      }
+    },
+    "img4": {
+      "image_path": "/home/sarthak/Downloads/graph/Anthracnose.jpeg",
+      "lettuce": {
+        "Lollo Rosso": 38.57815,
+        "Green Batavia": 30.62616,
+        "Romaine": 13.326885
+      },
+      "disease": {
+        "Gummy Stem Blight": 25.280666,
+        "Anthracnose": 21.990494,
+        "Bacterial Leaf Spot": 11.274057
+      },
+      "pest": {
+        "Colorado potato beetle": 17.58996,
+        "Wireworms": 15.645142,
+        "Armyworms": 15.420413
+      }
+    },
+    "img5": {
+      "image_path": "/home/sarthak/Downloads/graph/rust.jpeg",
+      "lettuce": {
+        "Green Batavia": 24.545829,
+        "Romaine": 22.318441,
+        "Butterhead": 21.195185
+      },
+      "disease": {
+        "Mosaic Virus": 17.89604,
+        "Septoria Leaf Spot": 14.333306,
+        "Rust": 11.307526
+      },
+      "pest": {
+        "Wireworms": 14.242865,
+        "Leafminers": 13.537136,
+        "Armyworms": 10.581751
+      }
+    }
+  },
+  "avg_all": {
+    "average_percentage_lettuce": {
+      "Butterhead": 30.4452042,
+      "Green Batavia": 20.2108178,
+      "Lollo Rosso": 14.9003288,
+      "Romaine": 10.6914592,
+      "Iceberg": 4.1961718
+    },
+    "average_percentage_disease": {
+      "Healthy": 22.126506,
+      "Mosaic Virus": 7.9524706,
+      "Powdery Mildew": 5.8530808,
+      "Downy Mildew": 5.5202342,
+      "Gummy Stem Blight": 5.0561332,
+      "Septoria Leaf Spot": 4.8823572,
+      "Anthracnose": 4.3980988000000005,
+      "Rust": 2.2615051999999998,
+      "Bacterial Leaf Spot": 2.2548114000000004,
+      "Black Rot Leaf Spot": 2.0423476000000003
+    },
+    "average_percentage_pest": {
+      "Healthy": 10.5188524,
+      "Wireworms": 8.9882898,
+      "Stinkbugs": 5.558673199999999,
+      "Armyworms": 5.2004328,
+      "Colorado potato beetle": 3.5179920000000005,
+      "Leafminers": 2.7074272,
+      "Cutworms": 2.6649634,
+      "Aphids": 2.5163978,
+      "Flea beetles": 1.8960982000000002
+    }
+  },
+  "timestamp": "2024-02-11T19:45:26.563840"
+}

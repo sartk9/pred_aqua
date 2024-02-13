@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
-from database import process_data
+from database import process_data,fetch_documents_as_dataframe
 from couchbase.cluster import Cluster, ClusterOptions, QueryOptions
 from couchbase.auth import PasswordAuthenticator
 import pandas as pd
 import os
 from datetime import datetime
+
+
 
 
 app = FastAPI()
@@ -14,6 +16,7 @@ app = FastAPI()
 cluster = Cluster('couchbase://localhost', ClusterOptions(PasswordAuthenticator('sartk', 'couchbasesartk9')))
 bucket = cluster.bucket('classify')
 collection = bucket.default_collection()
+
 
 
 
@@ -57,68 +60,6 @@ async def classify(data: dict):
 
 
 
-# Function to fetch documents as DataFrame
-def fetch_documents_as_dataframe(start_date=None, end_date=None):
-    try:
-        query = f"SELECT * FROM classify"
-        result = cluster.query(query, QueryOptions(adhoc=True))
-        documents = []
-        
-        for row in result.rows():
-            doc = row['classify']
-            metadata = doc['metadata']
-            individual_data = doc['individual_data']
-            avg_all = doc['avg_all']
-            
-            # Filtering based on selected start and end dates
-            if start_date and end_date:
-                if start_date <= timestamp_date <= end_date:
-                    pass
-                else:
-                    continue
-
-            row_data = {
-                 'id': metadata['id'],
-        'image_path1': individual_data['img1']['image_path'],
-        'image_path2': individual_data['img2']['image_path'],
-        'image_path3': individual_data['img3']['image_path'],
-        'image_path4': individual_data['img4']['image_path'],
-        'image_path5': individual_data['img5']['image_path'],
-        'lettuce1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['lettuce'].items()]),
-        'lettuce2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['lettuce'].items()]),
-        'lettuce3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['lettuce'].items()]),
-        'lettuce4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['lettuce'].items()]),
-        'lettuce5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['lettuce'].items()]),
-        'disease1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['disease'].items()]),
-        'disease2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['disease'].items()]),
-        'disease3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['disease'].items()]),
-        'disease4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['disease'].items()]),
-        'disease5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['disease'].items()]),
-        'pest1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['pest'].items()]),
-        'pest2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['pest'].items()]),
-        'pest3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['pest'].items()]),
-        'pest4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['pest'].items()]),
-        'pest5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['pest'].items()]),
-        'average_percentage_lettuce': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_lettuce'].items()]),
-        'average_percentage_disease': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_disease'].items()]),
-        'average_percentage_pest': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_pest'].items()]),
-        'timestamp': doc['timestamp'],
-        'create_dt': doc['create_dt'],
-        'create_by': doc['create_by'],
-        'update_dt': doc['update_dt'],
-        'update_by': doc['update_by'],
-        'affected_dt': doc['affected_dt']
-            }
-            
-            documents.append(row_data)
-        
-        df = pd.DataFrame(documents)
-        
-        return df
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 
 
 
@@ -144,8 +85,14 @@ async def display_table(start_date: str = None, end_date: str = None):
             return date_form + "<p>No results found within the selected date range.</p>"
 
         # Endpoint to serve images
-        @app.get("/images/{image_path:path}")
-        async def get_image(image_path: str):
+
+
+
+
+
+
+@app.get("/images/{image_path:path}")
+async def get_image(image_path: str):
             image_full_path = image_path  # Using full image path provided in the JSON
             if os.path.exists(image_full_path):
                 return FileResponse(image_full_path)

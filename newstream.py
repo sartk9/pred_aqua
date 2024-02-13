@@ -2,11 +2,19 @@ import streamlit as st
 import requests
 import pandas as pd
 
+
+
+
+
 st.title("Image Classification")
 st.header("Upload Images for Classification")
 
 # Input field for user to enter their name
 create_by = st.text_input("Enter your name")
+
+
+
+
 
 # Allow exactly five images to be uploaded
 uploaded_files = st.file_uploader("Upload Images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
@@ -23,6 +31,10 @@ if uploaded_files and len(uploaded_files) == 5:  # Ensure exactly five images ar
         # Print the data received in the POST request
         st.write("Data received in POST request:")
         st.json(data)  # Display the JSON data
+
+
+
+
 
 # Fetch Table Data button
 if st.button("Fetch Table Data"):

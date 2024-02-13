@@ -5,6 +5,7 @@ import os
 import uuid
 from datetime import datetime
 
+
 model1 = YOLO("/home/sarthak/Downloads/runs/classify/train14/weights/best.pt")  # lettuce
 model2 = YOLO("/home/sarthak/Downloads/runs/classify/train/weights/best.pt")  # disease
 model3 = YOLO("/home/sarthak/Downloads/runs/classify/train13/weights/best.pt")  # pest
@@ -97,7 +98,7 @@ def process_data(data, create_dt=None, create_by=None, update_dt=None, update_by
             "average_percentage_disease": avg_percentage_model2,
             "average_percentage_pest": avg_percentage_model3
         },
-  "timestamp": "2024-02-11T19:45:26.563840"
+  "timestamp": timestamp
     }
 
     return combined_data
@@ -114,66 +115,4 @@ def process_data(data, create_dt=None, create_by=None, update_dt=None, update_by
     
     
     
-    
-
-def fetch_documents_as_dataframe(start_date=None, end_date=None):
-    try:
-        query = f"SELECT * FROM classify"
-        result = cluster.query(query, QueryOptions(adhoc=True))
-        documents = []
-        for row in result.rows():
-            doc = row['classify']
-            metadata = doc['metadata']
-            individual_data = doc['individual_data']
-            avg_all = doc['avg_all']
-            
-            # Extracting date from the timestamp and ignoring the time part
-            timestamp = doc.get('timestamp')  # Ensure 'timestamp' exists in the document
-            if timestamp:
-                date = timestamp.date()
-                if start_date and date < start_date:
-                    continue
-                if end_date and date > end_date:
-                    continue
-
-            row_data = {
-                'id': metadata['id'],
-                'image_path1': individual_data['img1']['image_path'],
-                'image_path2': individual_data['img2']['image_path'],
-                'image_path3': individual_data['img3']['image_path'],
-                'image_path4': individual_data['img4']['image_path'],
-                'image_path5': individual_data['img5']['image_path'],
-                'lettuce1': individual_data['img1']['lettuce'],
-                'lettuce2': individual_data['img2']['lettuce'],
-                'lettuce3': individual_data['img3']['lettuce'],
-                'lettuce4': individual_data['img4']['lettuce'],
-                'lettuce5': individual_data['img5']['lettuce'],
-                'disease1': individual_data['img1']['disease'],
-                'disease2': individual_data['img2']['disease'],
-                'disease3': individual_data['img3']['disease'],
-                'disease4': individual_data['img4']['disease'],
-                'disease5': individual_data['img5']['disease'],
-                'pest1': individual_data['img1']['pest'],
-                'pest2': individual_data['img2']['pest'],
-                'pest3': individual_data['img3']['pest'],
-                'pest4': individual_data['img4']['pest'],
-                'pest5': individual_data['img5']['pest'],
-                'average_percentage_lettuce': avg_all['average_percentage_lettuce'],
-                'average_percentage_disease': avg_all['average_percentage_disease'],
-                'average_percentage_pest': avg_all['average_percentage_pest'],
-                'timestamp': timestamp,
-                'create_dt': doc['create_dt'],
-                'create_by': doc['create_by'],
-                'update_dt': doc['update_dt'],
-                'update_by': doc['update_by'],
-                'affected_dt': doc['affected_dt']
-            }
-            
-            documents.append(row_data)
-        
-        df = pd.DataFrame(documents)
-        
-        return df
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))    
 

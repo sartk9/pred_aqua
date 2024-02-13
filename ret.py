@@ -7,6 +7,7 @@ import pandas as pd
 import os
 from datetime import datetime
 
+
 app = FastAPI()
 
 # Couchbase connection settings
@@ -15,7 +16,8 @@ bucket = cluster.bucket('classify')
 collection = bucket.default_collection()
 
 
-# Endpoint for image classification
+
+
 @app.post("/classify")
 async def classify(data: dict):
     try:
@@ -35,6 +37,9 @@ async def classify(data: dict):
         timestamp = datetime.now().isoformat()  # Get the current timestamp in ISO format
         doc_id = f"{create_by}_{timestamp}"  # Combine create_by and timestamp for document ID
 
+        # Add create_dt with the present date (date only, no time)
+        combined_data['create_dt'] = datetime.now().strftime('%d-%m-%Y')  # Format the date as dd-mm-yyyy
+
         # Store the combined data in Couchbase using the generated ID
         collection.upsert(doc_id, combined_data)
 
@@ -52,64 +57,57 @@ async def classify(data: dict):
 
 
 
-
-
-
-
-
-
-
 # Function to fetch documents as DataFrame
 def fetch_documents_as_dataframe(start_date=None, end_date=None):
     try:
         query = f"SELECT * FROM classify"
         result = cluster.query(query, QueryOptions(adhoc=True))
         documents = []
+        
         for row in result.rows():
             doc = row['classify']
             metadata = doc['metadata']
             individual_data = doc['individual_data']
             avg_all = doc['avg_all']
             
-            # Extracting date from the timestamp and ignoring the time part
-            timestamp = datetime.fromisoformat(doc['timestamp'])
-            date = timestamp.date()
-            if start_date and date < start_date:
-                continue
-            if end_date and date > end_date:
-                continue
+            # Filtering based on selected start and end dates
+            if start_date and end_date:
+                if start_date <= timestamp_date <= end_date:
+                    pass
+                else:
+                    continue
 
             row_data = {
-                'id': metadata['id'],
-                'image_path1': individual_data['img1']['image_path'],
-                'image_path2': individual_data['img2']['image_path'],
-                'image_path3': individual_data['img3']['image_path'],
-                'image_path4': individual_data['img4']['image_path'],
-                'image_path5': individual_data['img5']['image_path'],
-                'lettuce1': individual_data['img1']['lettuce'],
-                'lettuce2': individual_data['img2']['lettuce'],
-                'lettuce3': individual_data['img3']['lettuce'],
-                'lettuce4': individual_data['img4']['lettuce'],
-                'lettuce5': individual_data['img5']['lettuce'],
-                'disease1': individual_data['img1']['disease'],
-                'disease2': individual_data['img2']['disease'],
-                'disease3': individual_data['img3']['disease'],
-                'disease4': individual_data['img4']['disease'],
-                'disease5': individual_data['img5']['disease'],
-                'pest1': individual_data['img1']['pest'],
-                'pest2': individual_data['img2']['pest'],
-                'pest3': individual_data['img3']['pest'],
-                'pest4': individual_data['img4']['pest'],
-                'pest5': individual_data['img5']['pest'],
-                'average_percentage_lettuce': avg_all['average_percentage_lettuce'],
-                'average_percentage_disease': avg_all['average_percentage_disease'],
-                'average_percentage_pest': avg_all['average_percentage_pest'],
-                'timestamp': doc['timestamp'],
-                'create_dt': doc['create_dt'],
-                'create_by': doc['create_by'],
-                'update_dt': doc['update_dt'],
-                'update_by': doc['update_by'],
-                'affected_dt': doc['affected_dt']
+                 'id': metadata['id'],
+        'image_path1': individual_data['img1']['image_path'],
+        'image_path2': individual_data['img2']['image_path'],
+        'image_path3': individual_data['img3']['image_path'],
+        'image_path4': individual_data['img4']['image_path'],
+        'image_path5': individual_data['img5']['image_path'],
+        'lettuce1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['lettuce'].items()]),
+        'lettuce2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['lettuce'].items()]),
+        'lettuce3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['lettuce'].items()]),
+        'lettuce4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['lettuce'].items()]),
+        'lettuce5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['lettuce'].items()]),
+        'disease1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['disease'].items()]),
+        'disease2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['disease'].items()]),
+        'disease3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['disease'].items()]),
+        'disease4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['disease'].items()]),
+        'disease5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['disease'].items()]),
+        'pest1': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img1']['pest'].items()]),
+        'pest2': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img2']['pest'].items()]),
+        'pest3': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img3']['pest'].items()]),
+        'pest4': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img4']['pest'].items()]),
+        'pest5': "<br>".join([f"• {item}: {value}" for item, value in individual_data['img5']['pest'].items()]),
+        'average_percentage_lettuce': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_lettuce'].items()]),
+        'average_percentage_disease': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_disease'].items()]),
+        'average_percentage_pest': "<br>".join([f"• {item}: {value}" for item, value in avg_all['average_percentage_pest'].items()]),
+        'timestamp': doc['timestamp'],
+        'create_dt': doc['create_dt'],
+        'create_by': doc['create_by'],
+        'update_dt': doc['update_dt'],
+        'update_by': doc['update_by'],
+        'affected_dt': doc['affected_dt']
             }
             
             documents.append(row_data)
@@ -138,10 +136,6 @@ async def display_table(start_date: str = None, end_date: str = None):
             <input type="submit" value="Filter">
         </form>
         """
-
-        # Convert start_date and end_date to datetime objects
-        start_date = datetime.fromisoformat(start_date) if start_date else None
-        end_date = datetime.fromisoformat(end_date) if end_date else None
 
         # Fetch documents as DataFrame
         df = fetch_documents_as_dataframe(start_date, end_date)
@@ -188,6 +182,7 @@ async def display_table(start_date: str = None, end_date: str = None):
         html_table = html_table.replace('<th>', '<th style="text-align:center">')
 
         # Return HTML response with form and table
+        
         return date_form + html_table
 
     except Exception as e:
